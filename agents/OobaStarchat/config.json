@@ -1,0 +1,14 @@
+{
+    "commands": {},
+    "settings": {
+        "provider": "oobabooga",
+        "AI_MODEL": "starchat-beta",
+        "AI_TEMPERATURE": "0.7",
+        "MAX_TOKENS": "2048",
+        "embedder": "default",
+        "autonomous_execution": false,
+        "AI_PROVIDER_URI": "http://localhost:5000",
+        "PROMPT_PREFIX": "User: ",
+        "PROMPT_SUFFIX": "\\nAssistant: "
+    }
+}
