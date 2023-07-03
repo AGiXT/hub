@@ -16,8 +16,8 @@ The `GibHub` extension will require two keys:
 
 All extensions will inherit from the `Extensions` class. This class will provide the following:
 - `self.commands` - A dictionary of commands that the extension provides. The key is the name of the command and the value is the function that will be called when the command is run.
-- `self.WORKING_DIRECTORY` - The directory that AGiXT Agent is allowed to work in.
-- Any API Keys for your extension. In this case, `self.GITHUB_USERNAME` and `self.GITHUB_API_KEY`. Add these to `__init__` as shown below.
+- `WORKING_DIRECTORY` - The directory that AGiXT Agent is allowed to work in.
+- Any API Keys for your extension. In this case, `GITHUB_USERNAME` and `GITHUB_API_KEY`. Add these to `__init__` as shown below.
 
 
 ```python
