@@ -1,6 +1,6 @@
 ## AGiXT Extensions
 
-Extensions are the way to add functionality to AGiXT. They are Python files that are installed into AGiXT and can be used to add new commands.
+Extensions are the way to extend the functionality of AGiXT with other software APIs or Python modules. Extensions are Python files that are placed in the `extensions` folder. AGiXT will automatically load all extensions and commands associated when it starts.
 
 ### Creating an Extension
 
