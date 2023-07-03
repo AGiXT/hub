@@ -9,14 +9,13 @@ from transformers import BlipProcessor, BlipForConditionalGeneration
 from PIL import Image
 from Extensions import Extensions
 from agixtsdk import AGiXTSDK
-from Chain import Chain
 
 ApiClient = AGiXTSDK(base_uri="http://localhost:7437")
 
 
 class agixt_actions(Extensions):
     def __init__(self, **kwargs):
-        self.chains = Chain().get_chains()
+        self.chains = ApiClient.get_chains()
         # agents = ApiClient.get_agents()
         self.commands = {
             "Create Task Chain": self.create_task_chain,
