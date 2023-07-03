@@ -15,7 +15,7 @@ ApiClient = AGiXTSDK(base_uri="http://localhost:7437")
 
 class agixt_actions(Extensions):
     def __init__(self, **kwargs):
-        self.chains = ApiClient.get_chains()
+        # self.chains = ApiClient.get_chains()
         # agents = ApiClient.get_agents()
         self.commands = {
             "Create Task Chain": self.create_task_chain,
@@ -27,13 +27,13 @@ class agixt_actions(Extensions):
             "Execute Python Code": self.execute_python_code,
             "Get Python Code from Response": self.get_python_code_from_response,
         }
+        """
         if self.chains != None:
             for chain in self.chains:
                 if "name" in chain:
                     self.commands.update(
                         {f"Run Chain: {chain['name']}": self.run_chain}
                     )
-        """
         if agents != None:
             for agent in agents:
                 if "name" in agent:
