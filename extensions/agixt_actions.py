@@ -2,11 +2,27 @@ import datetime
 import json
 import requests
 import os
-import torch
 import subprocess
+import sys
+
+try:
+    import torch
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "torch==1.10.0"])
+    import torch
+try:
+    from transformers import BlipProcessor, BlipForConditionalGeneration
+except ImportError:
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "transformers[accelerate]==4.30.1"]
+    )
+    from transformers import BlipProcessor, BlipForConditionalGeneration
+try:
+    from PIL import Image
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pillow==9.5.0"])
+    from PIL import Image
 from typing import List
-from transformers import BlipProcessor, BlipForConditionalGeneration
-from PIL import Image
 from Extensions import Extensions
 from agixtsdk import AGiXTSDK
 
