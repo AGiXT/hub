@@ -18,12 +18,28 @@ All extensions will inherit from the `Extensions` class. This class will provide
 - `self.commands` - A dictionary of commands that the extension provides. The key is the name of the command and the value is the function that will be called when the command is run.
 - `WORKING_DIRECTORY` - The directory that AGiXT Agent is allowed to work in.
 - Any API Keys for your extension. In this case, `GITHUB_USERNAME` and `GITHUB_API_KEY`. Add these to `__init__` as shown below.
-
+- Any imports that are required for your extension. In this case, `os`, `git`, and `Github`. Add try/excepts to install the modules if they are not already installed.
 
 ```python
 import os
-import git
-from github import Github
+
+try:
+    import git
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "GitPython==3.1.31"])
+    import git
+
+try:
+    from github import Github
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "PyGithub==1.58.2"])
+    from github import Github
 from Extensions import Extensions
 
 
