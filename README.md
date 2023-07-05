@@ -8,7 +8,9 @@
 
 [![Logo](https://josh-xt.github.io/AGiXT/images/AGiXT-gradient-flat.svg)](https://josh-xt.github.io/AGiXT/)
 
-[AGiXT](https://github.com/Josh-XT/AGiXT) Hub for Open Source AGiXT Extensions, Chains, Prompts, and Agents.
+[AGiXT](https://github.com/Josh-XT/AGiXT) Hub for Open Source AGiXT Providers, Extensions, Chains, Prompts, and Agents.
+
+This repository will be heavy weight as it will be the hub for all open source AGiXT Hub Providers, Extensions, Chains, Prompts, and Agents.  If you want a light weight hub, visit the [AGiXT Light Hub](https://github.com/AGiXT/light-hub) repository.
 
 
 ## Getting Started
