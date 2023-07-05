@@ -1,4 +1,11 @@
-import tweepy
+try:
+    import tweepy
+except ImportError:
+    import subprocess
+    import sys
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "tweepy"])
+    import tweepy
 from Extensions import Extensions
 import logging
 

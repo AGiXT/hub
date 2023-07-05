@@ -4,7 +4,15 @@ import os
 from Extensions import Extensions
 from io import BytesIO
 import requests
-from PIL import Image
+
+try:
+    from PIL import Image
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pillow==9.5.0"])
+    from PIL import Image
 import logging
 
 

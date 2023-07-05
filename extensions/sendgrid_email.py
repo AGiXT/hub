@@ -1,5 +1,13 @@
 from typing import List
-from sendgrid import SendGridAPIClient
+
+try:
+    from sendgrid import SendGridAPIClient
+except ImportError:
+    import subprocess
+    import sys
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "sendgrid"])
+    from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from Extensions import Extensions
 

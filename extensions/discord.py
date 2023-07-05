@@ -1,5 +1,12 @@
 # pip install discord.py
-import discord as dc
+try:
+    import discord as dc
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "discord"])
+    import discord as dc
 from discord.ext import commands
 from Extensions import Extensions
 import logging

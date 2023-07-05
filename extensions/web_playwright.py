@@ -1,8 +1,28 @@
 from typing import List, Union
 from requests.compat import urljoin
-from bs4 import BeautifulSoup
+
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    import subprocess
+    import sys
+
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "beautifulsoup4==4.12.2"]
+    )
+    from bs4 import BeautifulSoup
 from Extensions import Extensions
-from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout
+
+try:
+    from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout
+except ImportError:
+    import subprocess
+    import sys
+
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "playwright==1.33.0"]
+    )
+    from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout
 
 
 class web_playwright(Extensions):

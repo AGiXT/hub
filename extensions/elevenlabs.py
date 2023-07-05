@@ -1,7 +1,15 @@
 from Extensions import Extensions
 import os
 import requests
-from playsound import playsound
+
+try:
+    from playsound import playsound
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "playsound==1.2.2"])
+    from playsound import playsound
 
 
 class elevenlabs(Extensions):

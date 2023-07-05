@@ -1,7 +1,22 @@
 import os
 
-import git
-from github import Github
+try:
+    import git
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "GitPython==3.1.31"])
+    import git
+
+try:
+    from github import Github
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "PyGithub==1.58.2"])
+    from github import Github
 from Extensions import Extensions
 
 

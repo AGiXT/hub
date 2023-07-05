@@ -1,7 +1,15 @@
 from base64 import b64decode
-import openai
 from Extensions import Extensions
 import logging
+
+try:
+    import openai
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "openai"])
+    import openai
 
 
 class dalle(Extensions):

@@ -1,5 +1,18 @@
 from typing import List
-from google.oauth2.credentials import Credentials
+
+try:
+    from google.oauth2.credentials import Credentials
+except ImportError:
+    import subprocess
+    import sys
+
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "google-auth-oauthlib==1.0.0"]
+    )
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "google-api-python-client==2.87.0"]
+    )
+    from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
