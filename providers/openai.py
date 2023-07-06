@@ -12,6 +12,8 @@ class OpenaiProvider:
         AI_TOP_P: float = 0.7,
         MAX_TOKENS: int = 16384,
         API_URI: str = "https://api.openai.com/v1",
+        WAIT_BETWEEN_REQUESTS: int = 1,
+        WAIT_AFTER_FAILURE: int = 3,
         **kwargs,
     ):
         self.requirements = ["openai"]
@@ -20,11 +22,17 @@ class OpenaiProvider:
         self.AI_TOP_P = AI_TOP_P if AI_TOP_P else 0.7
         self.MAX_TOKENS = MAX_TOKENS if MAX_TOKENS else 16384
         self.API_URI = API_URI
+        self.WAIT_AFTER_FAILURE = WAIT_AFTER_FAILURE if WAIT_AFTER_FAILURE else 3
+        self.WAIT_BETWEEN_REQUESTS = (
+            WAIT_BETWEEN_REQUESTS if WAIT_BETWEEN_REQUESTS else 1
+        )
         openai.api_base = self.API_URI
         openai.api_key = OPENAI_API_KEY
 
     async def instruct(self, prompt, tokens: int = 0):
         max_new_tokens = int(self.MAX_TOKENS) - tokens
+        if int(self.WAIT_BETWEEN_REQUESTS) > 0:
+            time.sleep(int(self.WAIT_BETWEEN_REQUESTS))
         try:
             if not self.AI_MODEL.startswith("gpt-"):
                 # Use completion API
@@ -53,5 +61,7 @@ class OpenaiProvider:
                 return response.choices[0].message.content.strip()
         except Exception as e:
             logging.info(f"OpenAI API Error: {e}")
-            time.sleep(3)
-            return await self.instruct(prompt=prompt, tokens=tokens)
+            if int(self.WAIT_AFTER_FAILURE) > 0:
+                time.sleep(int(self.WAIT_AFTER_FAILURE))
+                return await self.instruct(prompt=prompt, tokens=tokens)
+            return str(response)
