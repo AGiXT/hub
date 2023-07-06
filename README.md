@@ -18,5 +18,10 @@ This repository will be heavy weight as it will be the hub for all open source A
 - If you don't already have AGiXT, [follow this link for instructions to set it up.](https://github.com/Josh-XT/AGiXT#quick-start-guide)
 - Modify your `.env.example` file for AGiXT to change the `AGIXT_HUB` variable, this should be `AGiXT/hub` if you want to use the Open Source AGiXT hub (this). If you want to use your own fork of AGiXT hub, change this to your username and the name of your fork.
 
+## Hubs
+
+- [AGiXT/hub](https://github.com/AGiXT/hub) - Open Source AGiXT Hub
+- [AGiXT/light-hub](https://github.com/AGiXT/light-hub) - Light Weight AGiXT Hub (Less providers and extensions, but faster to load and more applicable to most people who might not need things like transformers.)
+
 ## More Documentation
 Want to know more about AGiXT?  Check out our [documentation](https://josh-xt.github.io/AGiXT/) or [GitHub](https://github.com/Josh-XT/AGiXT) page.
