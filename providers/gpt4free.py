@@ -22,6 +22,7 @@ from g4f.Provider import (
     Ails,
     You,
     Bing,
+    Yqcloud,
     Theb,
     Aichat,
     Bard,
@@ -50,6 +51,8 @@ class Gpt4freeProvider:
         self.MAX_TOKENS = MAX_TOKENS
         self.FAILED_PROVIDERS = []
         self.providers = [  # Exclude providers that require auth
+            Yqcloud,
+            Aichat,
             Lockchat,
             ChatgptLogin,
             DeepAi,
