@@ -21,7 +21,7 @@ class OpenaiProvider:
         self.AI_TEMPERATURE = AI_TEMPERATURE if AI_TEMPERATURE else 0.7
         self.AI_TOP_P = AI_TOP_P if AI_TOP_P else 0.7
         self.MAX_TOKENS = MAX_TOKENS if MAX_TOKENS else 16384
-        self.API_URI = API_URI
+        self.API_URI = API_URI if API_URI else "https://api.openai.com/v1"
         self.WAIT_AFTER_FAILURE = WAIT_AFTER_FAILURE if WAIT_AFTER_FAILURE else 3
         self.WAIT_BETWEEN_REQUESTS = (
             WAIT_BETWEEN_REQUESTS if WAIT_BETWEEN_REQUESTS else 1
