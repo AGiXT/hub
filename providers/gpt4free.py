@@ -50,7 +50,6 @@ class Gpt4freeProvider:
         self.MAX_TOKENS = MAX_TOKENS
         self.FAILED_PROVIDERS = []
         self.providers = [  # Exclude providers that require auth
-            Aichat,
             Lockchat,
             ChatgptLogin,
             DeepAi,
