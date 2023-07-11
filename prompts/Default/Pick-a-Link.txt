@@ -10,3 +10,6 @@ There are available links to click on, if any seem likely to be relevant to the 
 
 Available links:
 {links}
+
+You have already browsed these links:
+{visited_links}
