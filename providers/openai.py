@@ -14,6 +14,7 @@ class OpenaiProvider:
         API_URI: str = "https://api.openai.com/v1",
         WAIT_BETWEEN_REQUESTS: int = 1,
         WAIT_AFTER_FAILURE: int = 3,
+        stream: str = "false",
         **kwargs,
     ):
         self.requirements = ["openai"]
@@ -26,6 +27,9 @@ class OpenaiProvider:
         self.WAIT_BETWEEN_REQUESTS = (
             WAIT_BETWEEN_REQUESTS if WAIT_BETWEEN_REQUESTS else 1
         )
+        if not stream:
+            self.stream = False
+        self.stream = True if stream.lower() == "true" else False
         openai.api_base = self.API_URI
         openai.api_key = OPENAI_API_KEY
 
@@ -44,8 +48,19 @@ class OpenaiProvider:
                     top_p=float(self.AI_TOP_P),
                     frequency_penalty=0,
                     presence_penalty=0,
+                    stream=bool(self.stream),
                 )
-                return response.choices[0].text.strip()
+                if not self.stream:
+                    return response.choices[0].text.strip()
+                else:
+                    answer = []
+                    for event in response:
+                        event_text = event["choices"][0]["text"]
+                        if event_text:
+                            answer.append(event_text.get("text", ""))
+                        time.sleep(0.1)
+                    new_response = " ".join(answer)
+                    return new_response.strip()
             else:
                 # Use chat completion API
                 messages = [{"role": "system", "content": prompt}]
@@ -57,8 +72,19 @@ class OpenaiProvider:
                     top_p=float(self.AI_TOP_P),
                     n=1,
                     stop=None,
+                    stream=bool(self.stream),
                 )
-                return response.choices[0].message.content.strip()
+                if not self.stream:
+                    return response.choices[0].message.content.strip()
+                else:
+                    answer = []
+                    for event in response:
+                        event_text = event["choices"][0]["delta"]
+                        if event_text:
+                            answer.append(event_text.get("content", ""))
+                        time.sleep(0.1)
+                    new_response = " ".join(answer)
+                    return new_response.strip()
         except Exception as e:
             logging.info(f"OpenAI API Error: {e}")
             if int(self.WAIT_AFTER_FAILURE) > 0:
