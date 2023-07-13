@@ -36,6 +36,7 @@ class OobaboogaProvider:
         AI_MODEL: str = "default",
         PROMPT_PREFIX: str = "",
         PROMPT_SUFFIX: str = "",
+        STOP_STRING: str = "</s>",
         **kwargs,
     ):
         self.AI_PROVIDER_URI = (
@@ -73,6 +74,7 @@ class OobaboogaProvider:
         self.TRUNCATION_LENGTH = TRUNCATION_LENGTH if TRUNCATION_LENGTH else 2048
         self.PROMPT_PREFIX = PROMPT_PREFIX if PROMPT_PREFIX else ""
         self.PROMPT_SUFFIX = PROMPT_SUFFIX if PROMPT_SUFFIX else ""
+        self.STOP_STRING = STOP_STRING if STOP_STRING else "</s>"
         self.requirements = []
 
     async def instruct(self, prompt, tokens: int = 0):
@@ -107,7 +109,7 @@ class OobaboogaProvider:
             "ban_eos_token": False,
             "skip_special_tokens": True,
             "custom_stopping_strings": "",  # leave this blank
-            "stopping_strings": ["</s>"],
+            "stopping_strings": [self.STOP_STRING],
         }
         response = requests.post(f"{self.AI_PROVIDER_URI}/api/v1/generate", json=params)
         data = None
