@@ -1,5 +1,11 @@
 import requests
 import re
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+TEXTGEN_URI = os.getenv("TEXTGEN_URI", "http://localhost:5000")
 
 
 class OobaboogaProvider:
@@ -33,8 +39,14 @@ class OobaboogaProvider:
         **kwargs,
     ):
         self.AI_PROVIDER_URI = (
-            AI_PROVIDER_URI if AI_PROVIDER_URI else "http://localhost:5000"
+            AI_PROVIDER_URI if AI_PROVIDER_URI else "http://text-generation-webui:5000"
         )
+        if (
+            "localhost" in self.AI_PROVIDER_URI
+            and TEXTGEN_URI == "http://text-generation-webui:5000"
+        ):
+            self.AI_PROVIDER_URI = "http://text-generation-webui:5000"
+
         self.MAX_TOKENS = MAX_TOKENS if MAX_TOKENS else 2048
         self.DO_SAMPLE = DO_SAMPLE if DO_SAMPLE else "True"
         self.AI_TEMPERATURE = AI_TEMPERATURE if AI_TEMPERATURE else 0.7
@@ -97,7 +109,6 @@ class OobaboogaProvider:
             "custom_stopping_strings": "",  # leave this blank
             "stopping_strings": ["</s>"],
         }
-        print(params)
         response = requests.post(f"{self.AI_PROVIDER_URI}/api/v1/generate", json=params)
         data = None
 
