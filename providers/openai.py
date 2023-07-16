@@ -29,7 +29,7 @@ class OpenaiProvider:
         )
         if not stream:
             self.stream = False
-        self.stream = True if stream.lower() == "true" else False
+        self.stream = True if str(stream).lower() == "true" else False
         openai.api_base = self.API_URI
         openai.api_key = OPENAI_API_KEY
 
