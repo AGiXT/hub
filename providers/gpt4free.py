@@ -13,7 +13,7 @@ except ImportError:
             "-m",
             "pip",
             "install",
-            "-e git+https://github.com/xtekky/gpt4free.git#egg=gpt4free",
+            "g4f",
         ]
     )
     import g4f
