@@ -2,37 +2,65 @@ import datetime
 import json
 import requests
 import os
+import re
 import subprocess
-import sys
-
-try:
-    import torch
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "torch==1.10.0"])
-    import torch
-try:
-    from transformers import BlipProcessor, BlipForConditionalGeneration
-except ImportError:
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "transformers[accelerate]==4.30.1"]
-    )
-    from transformers import BlipProcessor, BlipForConditionalGeneration
-try:
-    from PIL import Image
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pillow==9.5.0"])
-    from PIL import Image
 from typing import List
 from Extensions import Extensions
 from agixtsdk import AGiXTSDK
-
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
 agixt_api_key = os.getenv("AGIXT_API_KEY")
 base_uri = "http://localhost:7437"
 ApiClient = AGiXTSDK(base_uri=base_uri, api_key=agixt_api_key)
+
+
+def extract_markdown_from_message(message):
+    match = re.search(r"```(.*)```", message, re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+
+def parse_mindmap(mindmap):
+    markdown_text = extract_markdown_from_message(mindmap)
+    if not markdown_text:
+        markdown_text = mindmap
+    markdown_text = markdown_text.strip()
+    lines = markdown_text.split("\n")
+
+    root = {}
+    current_path = [root]
+
+    for line in lines:
+        node = line.strip().lstrip("- ").replace("**", "")
+        indent_level = (len(line) - len(line.lstrip())) // 4
+
+        if indent_level < len(current_path) - 1:
+            current_path = current_path[: indent_level + 1]
+
+        current_dict = current_path[-1]
+        if isinstance(current_dict, list):
+            current_dict = current_path[-2][
+                current_dict[0]
+            ]  # go one level up if current dict is a list
+
+        if node not in current_dict:
+            current_dict[node] = {}
+
+        current_path.append(current_dict[node])
+
+    # Function to convert dictionary leaf nodes into lists
+    def convert_to_lists(node):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if isinstance(value, dict):
+                    if all(isinstance(val, dict) and not val for val in value.values()):
+                        # filter out any empty keys
+                        node[key] = [k for k in value.keys() if k]
+                    else:
+                        convert_to_lists(value)
+
+    convert_to_lists(root)
+    return root
 
 
 class agixt_actions(Extensions):
@@ -45,27 +73,10 @@ class agixt_actions(Extensions):
             "Generate Agent Helper Chain": self.generate_helper_chain,
             "Ask for Help or Further Clarification to Complete Task": self.ask_for_help,
             "Create a new command": self.create_command,
-            "Describe Image": self.describe_image,
             "Execute Python Code": self.execute_python_code,
             "Get Python Code from Response": self.get_python_code_from_response,
+            "Get Mindmap for task to break it down": self.get_mindmap,
         }
-        """
-        if self.chains != None:
-            for chain in self.chains:
-                if "name" in chain:
-                    self.commands.update(
-                        {f"Run Chain: {chain['name']}": self.run_chain}
-                    )
-        if agents != None:
-            for agent in agents:
-                if "name" in agent:
-                    name = f" AI Agent {agent['name']}"
-                    self.commands.update(
-                        {
-                            f"Ask{name}": self.ask,
-                            f"Instruct{name}": self.instruct,
-                        }
-                    )"""
 
     async def create_task_chain(
         self,
@@ -408,31 +419,6 @@ class agixt_actions(Extensions):
         )
         return response
 
-    async def describe_image(self, image_url):
-        """
-        Describe an image using FuseCap.
-        """
-        if image_url:
-            processor = BlipProcessor.from_pretrained("noamrot/FuseCap")
-            model = BlipForConditionalGeneration.from_pretrained("noamrot/FuseCap")
-
-            # Define the device to run the model on (CPU or GPU)
-
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            model.to(device)
-            raw_image = Image.open(requests.get(image_url, stream=True).raw).convert(
-                "RGB"
-            )
-
-            # Generate a caption for the image using FuseCap
-            text = "a picture of "
-            inputs = processor(raw_image, text, return_tensors="pt").to(device)
-            out = model.generate(max_length=20, temperature=0.7, **inputs, num_beams=3)
-            caption = processor.decode(out[0], skip_special_tokens=True)
-
-            # Return the caption
-            return caption
-
     async def get_python_code_from_response(self, response: str):
         if "```python" in response:
             response = response.split("```python")[1].split("```")[0]
@@ -463,3 +449,11 @@ class agixt_actions(Extensions):
 
         # Decode the output from bytes to string and return it
         return response.decode("utf-8")
+
+    async def get_mindmap(self, task: str, agent: str = "AGiXT"):
+        mindmap = ApiClient.prompt_agent(
+            agent_name=agent,
+            prompt_name="Mindmap",
+            prompt_args={"user_input": task},
+        )
+        return parse_mindmap(mindmap=mindmap)
