@@ -29,9 +29,10 @@ class PipelineProvider:
     def __init__(
         self,
         MODEL_PATH: str = "HuggingFaceH4/starchat-beta",
-        AI_TEMPERATURE: float = 0.9,
+        AI_TEMPERATURE: float = 0.7,
         MAX_TOKENS: int = 1024,
         AI_MODEL: str = "starchat",
+        HUGGINGFACE_API_KEY: str = None,
         **kwargs,
     ):
         self.requirements = ["transformers", "accelerate"]
@@ -41,6 +42,8 @@ class PipelineProvider:
         self.AI_MODEL = AI_MODEL
         self.pipeline = None
         self.pipeline_kwargs = kwargs
+        if HUGGINGFACE_API_KEY:
+            self.pipeline_kwargs["use_auth_token"] = HUGGINGFACE_API_KEY
         self.pipeline_kwargs["return_full_text"] = False
 
     async def instruct(self, prompt, tokens: int = 0):
@@ -70,9 +73,11 @@ class PipelineProvider:
         
     def get_max_length(self):
         self.load_pipeline()
+        if self.pipeline.model.generation_config.max_length:
+            return self.pipeline.model.generation_config.max_length
         max_length = self.pipeline.tokenizer.model_max_length
         if max_length == int(1e30):
-            return
+            return 4096
         return max_length
     
     def get_max_new_tokens(self, input_length: int = 0) -> int:
