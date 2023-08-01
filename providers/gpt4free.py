@@ -1,12 +1,8 @@
 import logging
-import time
-
 try:
-    import g4f
+    from g4f import Provider, ModelUtils, ChatCompletion
 except ImportError:
-    import sys
-    import subprocess
-
+    import sys, subprocess
     subprocess.check_call(
         [
             sys.executable,
@@ -16,92 +12,95 @@ except ImportError:
             "g4f",
         ]
     )
-    import g4f
+    from g4f import Provider, ModelUtils, ChatCompletion
 
-from g4f.Provider import (
-    Ails,
-    You,
-    Bing,
-    Yqcloud,
-    Theb,
-    Aichat,
-    Bard,
-    Vercel,
-    Forefront,
-    Lockchat,
-    Liaobots,
-    H2o,
-    ChatgptLogin,
-    DeepAi,
-    GetGpt,
-)
-
+providers = [
+    # Working:
+    Provider.GetGpt,
+    Provider.AiService,
+    Provider.ChatgptAi,
+    Provider.H2o,
+    # Works sometimes:
+    Provider.Aichat,
+    # Not working today:
+    Provider.Yqcloud,
+    Provider.Ails,
+    Provider.AItianhu,
+    Provider.Bing,
+    Provider.ChatgptLogin,
+    Provider.DeepAi,
+    # Provider.DfeHub, endless loop
+    Provider.EasyChat,
+    Provider.Lockchat,
+    Provider.Theb,
+    Provider.Vercel,
+    Provider.You,
+]
 
 class Gpt4freeProvider:
     def __init__(
         self,
         AI_MODEL: str = "gpt-3.5-turbo",
-        AI_TEMPERATURE: float = 0.7,
-        MAX_TOKENS: int = 4000,
         **kwargs,
     ):
         self.requirements = ["gpt4free"]
-        self.AI_MODEL = AI_MODEL
-        self.AI_TEMPERATURE = AI_TEMPERATURE
-        self.MAX_TOKENS = MAX_TOKENS
-        self.FAILED_PROVIDERS = []
-        self.providers = [  # Exclude providers that require auth
-            Yqcloud,
-            Aichat,
-            Lockchat,
-            ChatgptLogin,
-            DeepAi,
-            GetGpt,
-            Ails,
-            You,
-            Bing,
-            Theb,
-            Vercel,
-            H2o,
-        ]
-
-    async def provider_failure(self, provider):
-        if provider not in self.FAILED_PROVIDERS:
-            self.FAILED_PROVIDERS.append(provider)
-            logging.info(f"[GPT4Free] Failed provider: {provider}")
-            if len(self.FAILED_PROVIDERS) == len(self.providers):
-                self.FAILED_PROVIDERS = []
-                logging.info(
-                    "All providers failed, sleeping for 10 seconds before trying again..."
-                )
-                time.sleep(10)
+        self.model = AI_MODEL
 
     async def instruct(self, prompt, tokens: int = 0):
-        for provider in self.providers:
+        for provider in providers:
+            if not provider.working:
+                continue
             try:
-                if provider not in self.FAILED_PROVIDERS:
-                    response = g4f.ChatCompletion.create(
-                        model=g4f.Model.gpt_35_turbo,
-                        provider=provider,
-                        messages=[{"role": "user", "content": prompt}],
-                    )
-                    if response:
-                        if provider == Ails:
-                            if "error" in response and "message" in response:
-                                response = None
-                        elif provider == Vercel:
-                            if response == "Vercel is currently not working.":
-                                response = None
-                        if (
-                            response
-                            == "Unable to fetch the response, Please try again."
-                        ):
-                            response = None
-                    if response and len(response) > 1:
-                        return response
-                    else:
-                        await self.provider_failure(provider)
-
+                logging.info(f"[Gpt4Free] Use provider: {provider.__name__}")
+                if self.model not in provider.model:
+                    model = provider.model[0]
+                    logging.info(f"[Gpt4Free] Use model: {model}")
+                else:
+                    model = self.model
+                response = ChatCompletion.create(
+                    model = ModelUtils.convert[self.model],
+                    provider = provider,
+                    messages = [{"role": "user", "content": prompt}],
+                )
+                if not response:
+                    logging.info(f"[Gpt4Free] Skip provider: Empty response")
+                    continue
+                elif not isinstance(response, str):
+                    logging.info(f"[Gpt4Free] Skip provider: Response is not a string")
+                    continue
+                elif response in (
+                    "Vercel is currently not working.",
+                    "Unable to fetch the response, Please try again."
+                ):
+                    logging.info(f"[Gpt4Free] Skip provider: {response}")
+                    continue
+                else:
+                    return response
             except Exception as e:
-                logging.error(f"[GPT4Free] Exception: {e}")
-                await self.provider_failure(provider)
+                logging.info(f"[Gpt4Free] Exception: {e}")
+            provider.working = False
+
+if __name__ == "__main__":
+    # Test provider class
+    import asyncio
+    async def run_test():
+        response = await Gpt4freeProvider().instruct("Hello")
+        print(f"Class test: {response}")
+    asyncio.run(run_test())
+
+    # Test all providers
+    for provider in providers:
+        if not provider.working:
+            continue
+        try:
+            print(f"Use provider: {provider.__name__}")
+            model = provider.model[0]
+            print(f"Use model: {model}")
+            response = ChatCompletion.create(
+                model = ModelUtils.convert[model],
+                provider = provider,
+                messages = [{"role": "user", "content": "Hello"}],
+            )
+            print(f"Response: {response}")
+        except Exception as e:
+            print(f"{e.__class__.__name__}: {e}")
