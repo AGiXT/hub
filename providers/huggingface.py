@@ -2,7 +2,7 @@ import requests
 import time
 import logging
 
-models = {
+MODELS = {
     "HuggingFaceH4/starchat-beta": 8192,
     "OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5": 1512,
     "bigcode/starcoderplus": 8192,
@@ -12,6 +12,8 @@ models = {
     "EleutherAI/gpt-neo-1.3B": 2048,
     "RedPajama-INCITE-Instruct-3B-v1": 2048,
 }
+
+DEFAULT_MAX_LENGHT = 4096
 
 class HuggingfaceProvider:
     def __init__(
@@ -41,16 +43,12 @@ class HuggingfaceProvider:
         return self.HUGGINGFACE_API_URL.replace("{model}", self.MODEL_PATH)
         
     def get_max_length(self):
-        if self.MODEL_PATH in models:
-            return models[self.MODEL_PATH]
-        return 4096
+        if self.MODEL_PATH in MODELS:
+            return MODELS[self.MODEL_PATH]
+        return DEFAULT_MAX_LENGHT
     
     def get_max_new_tokens(self, input_length: int = 0) -> int:
-        max_length = self.get_max_length()
-        max_length -= input_length
-        if max_length > 0 and self.MAX_TOKENS > max_length:
-            return max_length
-        return self.MAX_TOKENS
+        return min(self.get_max_length() - input_length, self.MAX_TOKENS)
 
     def request(self, inputs, **kwargs):
         payload = {"inputs": inputs, "parameters": {**kwargs}}
