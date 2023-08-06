@@ -14,7 +14,7 @@ class ClaudeProvider:
         self,
         ANTHROPIC_API_KEY: str = "",
         MAX_TOKENS: int = 75000,
-        AI_MODEL: str = "claude-v1-100k",
+        AI_MODEL: str = "claude-2",
         AI_TEMPERATURE: float = 0.7,
         **kwargs,
     ):
