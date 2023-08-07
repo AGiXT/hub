@@ -17,11 +17,11 @@ except ImportError:
 providers = [
     # Working:
     Provider.GetGpt,
-    Provider.AiService,
     Provider.ChatgptAi,
     Provider.H2o,
     # Works sometimes:
     Provider.Aichat,
+    Provider.AiService,
     # Not working today:
     Provider.Yqcloud,
     Provider.Ails,
@@ -30,7 +30,7 @@ providers = [
     Provider.ChatgptLogin,
     Provider.DeepAi,
     # Provider.DfeHub, endless loop
-    Provider.EasyChat,
+    # Provider.EasyChat, ERROR pointing to g4f code
     Provider.Lockchat,
     Provider.Theb,
     Provider.Vercel,
@@ -53,7 +53,10 @@ class Gpt4freeProvider:
             try:
                 logging.info(f"[Gpt4Free] Use provider: {provider.__name__}")
                 if self.model not in provider.model:
-                    model = provider.model[0]
+                    if type(provider.model) == str:
+                        model = provider.model
+                    else:
+                        model = provider.model[0]
                     logging.info(f"[Gpt4Free] Use model: {model}")
                 else:
                     model = self.model
@@ -71,7 +74,7 @@ class Gpt4freeProvider:
                 elif response in (
                     "Vercel is currently not working.",
                     "Unable to fetch the response, Please try again."
-                ):
+                ) or "{\"error\":{\"message\":\"Hey! The webpage has been updated." in response:    # Ails
                     logging.info(f"[Gpt4Free] Skip provider: {response}")
                     continue
                 else:
@@ -94,7 +97,10 @@ if __name__ == "__main__":
             continue
         try:
             print(f"Use provider: {provider.__name__}")
-            model = provider.model[0]
+            if type(provider.model) == str:
+                model = provider.model
+            else:
+                model = provider.model[0]
             print(f"Use model: {model}")
             response = ChatCompletion.create(
                 model = ModelUtils.convert[model],
