@@ -23,7 +23,8 @@ class ClaudeProvider:
         self.AI_MODEL = AI_MODEL if AI_MODEL else "claude-v1-100k"
         self.AI_TEMPERATURE = AI_TEMPERATURE if AI_TEMPERATURE else 0.7
 
-    async def instruct(self, prompt):
+    async def instruct(self, prompt, tokens: int = 0):
+        max_new_tokens = int(self.MAX_TOKENS) - int(tokens)
         try:
             c = anthropic.Client(api_key=self.ANTHROPIC_API_KEY)
             return c.completion(
@@ -31,7 +32,7 @@ class ClaudeProvider:
                 stop_sequences=[anthropic.HUMAN_PROMPT],
                 model=self.AI_MODEL,
                 temperature=float(self.AI_TEMPERATURE),
-                max_tokens_to_sample=self.MAX_TOKENS,
+                max_tokens_to_sample=max_new_tokens,
             )
         except Exception as e:
             return f"Claude Error: {e}"
