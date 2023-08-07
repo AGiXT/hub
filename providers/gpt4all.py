@@ -5,6 +5,7 @@ try:
     from nomic.gpt4all import GPT4All
 except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "nomic"])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "gpt4all"])
     from nomic.gpt4all import GPT4All
 
 
