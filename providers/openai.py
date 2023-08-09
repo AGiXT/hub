@@ -1,7 +1,23 @@
-import openai
 import time
 import logging
-import tiktoken
+
+try:
+    import openai
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "openai"])
+    import openai
+
+try:
+    import tiktoken
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "tiktoken"])
+    import tiktoken
 
 
 class OpenaiProvider:
