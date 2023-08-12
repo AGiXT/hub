@@ -9,17 +9,21 @@ except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "petals"])
     from petals import AutoDistributedModelForCausalLM
 
+class PetalsPipeline:
+    def __init__(self, model, tokenizer):
+        self.tokenizer = tokenizer
+        self.model = model
 
-class PetalPipeline:
-    def __init__(self, model: str, **kwargs):
-        self.tokenizer = AutoTokenizer.from_pretrained(model)
-        self.model = AutoDistributedModelForCausalLM.from_pretrained(model, **kwargs)
+    @classmethod
+    def from_pretrained(cls, model_name_or_path, **kwargs):
+        tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+        model = AutoDistributedModelForCausalLM.from_pretrained(model_name_or_path, **kwargs)
+        return cls(model, tokenizer)
 
-    def __call__(self, prompt: str, **kwargs):
+    def __call__(self, prompt: str, **kwargs) -> str:
         input_ids = self.tokenizer(prompt, return_tensors="pt")["input_ids"]
         outputs = self.model.generate(input_ids, **kwargs)[0]
-        return self.tokenizer.decode(outputs, skip_special_tokens=True)[len(prompt) :]
-
+        return self.tokenizer.decode(outputs[len(input_ids[0]):], skip_special_tokens=True)
 
 class PetalProvider(PipelineProvider):
     def __init__(
@@ -51,8 +55,7 @@ class PetalProvider(PipelineProvider):
     def load_pipeline(self):
         if not self.pipeline:
             self.load_args()
-            self.pipeline = PetalPipeline(self.MODEL_PATH, **self.pipeline_kwargs)
-
+            self.pipeline = PetalsPipeline.from_pretrained(self.MODEL_PATH, **self.pipeline_kwargs)
 
 if __name__ == "__main__":
     import asyncio
