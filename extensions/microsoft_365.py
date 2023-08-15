@@ -27,6 +27,7 @@ class microsoft_365(Extensions):
         MICROSOFT_365_REDIRECT_URI: str = "",
         **kwargs,
     ):
+        self.requirements = ["google-auth-oauthlib", "google-api-python-client"]
         self.MICROSOFT_365_CLIENT_ID = MICROSOFT_365_CLIENT_ID
         self.MICROSOFT_365_CLIENT_SECRET = MICROSOFT_365_CLIENT_SECRET
         self.MICROSOFT_365_REDIRECT_URI = MICROSOFT_365_REDIRECT_URI

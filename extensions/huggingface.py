@@ -24,6 +24,7 @@ class huggingface(Extensions):
         WORKING_DIRECTORY: str = "./WORKSPACE",
         **kwargs,
     ):
+        self.requirements = ["pillow"]
         self.HUGGINGFACE_API_KEY = HUGGINGFACE_API_KEY
         self.HUGGINGFACE_AUDIO_TO_TEXT_MODEL = HUGGINGFACE_AUDIO_TO_TEXT_MODEL
         self.WORKING_DIRECTORY = WORKING_DIRECTORY
