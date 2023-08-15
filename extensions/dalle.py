@@ -15,12 +15,10 @@ except ImportError:
 class dalle(Extensions):
     def __init__(
         self,
-        HUGGINGFACE_API_KEY: str = "",
         OPENAI_API_KEY: str = "",
         WORKING_DIRECTORY: str = "./WORKSPACE",
         **kwargs,
     ):
-        self.HUGGINGFACE_API_KEY = HUGGINGFACE_API_KEY
         self.OPENAI_API_KEY = OPENAI_API_KEY
         self.WORKING_DIRECTORY = WORKING_DIRECTORY
         if self.OPENAI_API_KEY:
