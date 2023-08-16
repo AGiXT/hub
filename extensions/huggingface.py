@@ -39,7 +39,7 @@ class huggingface(Extensions):
         API_URL = (
             "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4"
         )
-        headers = {"Authorization": f"Bearer {self.HUGGINGFACE_API_TOKEN}"}
+        headers = {"Authorization": f"Bearer {self.HUGGINGFACE_API_KEY}"}
 
         response = requests.post(
             API_URL,
