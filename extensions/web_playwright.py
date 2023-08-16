@@ -20,7 +20,7 @@ except ImportError:
     import sys
 
     subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "playwright==1.33.0"]
+        [sys.executable, "-m", "pip", "install", "playwright==1.37.0"]
     )
     from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout
 
