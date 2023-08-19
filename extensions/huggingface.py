@@ -16,11 +16,6 @@ class huggingface(Extensions):
         self.HUGGINGFACE_API_KEY = HUGGINGFACE_API_KEY
         self.HUGGINGFACE_AUDIO_TO_TEXT_MODEL = HUGGINGFACE_AUDIO_TO_TEXT_MODEL
         self.WORKING_DIRECTORY = os.path.join(os.getcwd(), "WORKSPACE")
-        if "settings" in self.agent_config:
-            if "WORKING_DIRECTORY" in self.agent_config["settings"]:
-                self.WORKING_DIRECTORY = self.agent_config["settings"][
-                    "WORKING_DIRECTORY"
-                ]
         if self.HUGGINGFACE_API_KEY is not None:
             self.commands = {
                 "Read Audio from File": self.read_audio_from_file,

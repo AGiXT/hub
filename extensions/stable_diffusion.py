@@ -19,6 +19,7 @@ class stable_diffusion(Extensions):
     def __init__(
         self,
         STABLE_DIFFUSION_API_URL: str = "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4",
+        HUGGINGFACE_API_KEY: str = None,
         **kwargs,
     ):
         self.requirements = ["pillow"]
@@ -28,17 +29,7 @@ class stable_diffusion(Extensions):
             else "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4"
         )
         self.WORKING_DIRECTORY = os.path.join(os.getcwd(), "WORKSPACE")
-        self.HUGGINGFACE_API_KEY = None
-
-        if "settings" in self.agent_config:
-            if "WORKING_DIRECTORY" in self.agent_config["settings"]:
-                self.WORKING_DIRECTORY = self.agent_config["settings"][
-                    "WORKING_DIRECTORY"
-                ]
-            if "HUGGINGFACE_API_KEY" in self.agent_config["settings"]:
-                self.HUGGINGFACE_API_KEY = self.agent_config["settings"][
-                    "HUGGINGFACE_API_KEY"
-                ]
+        self.HUGGINGFACE_API_KEY = HUGGINGFACE_API_KEY
         os.makedirs(self.WORKING_DIRECTORY, exist_ok=True)
         self.commands = {
             "Generate Image with Stable Diffusion": self.generate_image,
