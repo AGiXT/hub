@@ -2,18 +2,7 @@ import requests
 import json
 import os
 from Extensions import Extensions
-from io import BytesIO
 import requests
-
-try:
-    from PIL import Image
-except ImportError:
-    import sys
-    import subprocess
-
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pillow==9.5.0"])
-    from PIL import Image
-import logging
 
 
 class huggingface(Extensions):
@@ -21,40 +10,22 @@ class huggingface(Extensions):
         self,
         HUGGINGFACE_API_KEY: str = "",
         HUGGINGFACE_AUDIO_TO_TEXT_MODEL: str = "facebook/wav2vec2-large-960h-lv60-self",
-        WORKING_DIRECTORY: str = "./WORKSPACE",
         **kwargs,
     ):
         self.requirements = ["pillow"]
         self.HUGGINGFACE_API_KEY = HUGGINGFACE_API_KEY
         self.HUGGINGFACE_AUDIO_TO_TEXT_MODEL = HUGGINGFACE_AUDIO_TO_TEXT_MODEL
-        self.WORKING_DIRECTORY = WORKING_DIRECTORY
+        self.WORKING_DIRECTORY = os.path.join(os.getcwd(), "WORKSPACE")
+        if "settings" in self.agent_config:
+            if "WORKING_DIRECTORY" in self.agent_config["settings"]:
+                self.WORKING_DIRECTORY = self.agent_config["settings"][
+                    "WORKING_DIRECTORY"
+                ]
         if self.HUGGINGFACE_API_KEY is not None:
             self.commands = {
                 "Read Audio from File": self.read_audio_from_file,
                 "Read Audio": self.read_audio,
-                "Generate Image with Stable Diffusion": self.generate_image_with_hf,
             }
-
-    async def generate_image_with_hf(self, prompt: str, filename: str) -> str:
-        API_URL = (
-            "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4"
-        )
-        headers = {"Authorization": f"Bearer {self.HUGGINGFACE_API_KEY}"}
-
-        response = requests.post(
-            API_URL,
-            headers=headers,
-            json={
-                "inputs": prompt,
-            },
-        )
-
-        image = Image.open(BytesIO(response.content))
-        logging.info(f"Image Generated for prompt:{prompt}")
-
-        image.save(os.path.join(self.WORKING_DIRECTORY, filename))
-
-        return f"Saved to disk:{filename}"
 
     async def read_audio_from_file(self, audio_path: str):
         audio_path = os.path.join(self.WORKING_DIRECTORY, audio_path)
