@@ -22,8 +22,8 @@ class huggingface(Extensions):
         self.WORKING_DIRECTORY = os.path.join(os.getcwd(), "WORKSPACE")
         if self.HUGGINGFACE_API_KEY is not None:
             self.commands = {
-                "Read Audio from File": self.read_audio_from_file,
-                "Read Audio": self.read_audio,
+                "Read Audio from File with Huggingface": self.read_audio_from_file,
+                "Read Audio with Huggingface": self.read_audio,
             }
 
     async def read_audio_from_file(self, audio_path: str):
