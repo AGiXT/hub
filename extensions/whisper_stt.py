@@ -15,6 +15,19 @@ class whisper_stt:
         }
         # https://huggingface.co/ggerganov/whisper.cpp
         # Models: tiny, tiny.en, base, base.en, small, small.en, medium, medium.en, large, large-v1
+        if WHISPER_MODEL not in [
+            "tiny",
+            "tiny.en",
+            "base",
+            "base.en",
+            "small",
+            "small.en",
+            "medium",
+            "medium.en",
+            "large",
+            "large-v1",
+        ]:
+            WHISPER_MODEL = "base.en"
         os.makedirs(os.path.join(os.getcwd(), "models", "whispercpp"), exist_ok=True)
         model_path = os.path.join(
             os.getcwd(), "models", "whispercpp", f"ggml-{WHISPER_MODEL}.bin"
