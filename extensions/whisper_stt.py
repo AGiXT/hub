@@ -1,10 +1,39 @@
-import ffmpeg
-import numpy as np
-from whispercpp import Whisper
-import sounddevice as sd
-import soundfile as sf
+try:
+    import ffmpeg
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "ffmpeg-python"])
+    import ffmpeg
+try:
+    from whispercpp import Whisper
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "whispercpp"])
+    from whispercpp import Whisper
+
+try:
+    import sounddevice as sd
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "sounddevice"])
+    import sounddevice as sd
+try:
+    import soundfile as sf
+except ImportError:
+    import sys
+    import subprocess
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "soundfile"])
+    import soundfile as sf
 import requests
 import os
+import numpy as np
 
 
 class whisper_stt:
