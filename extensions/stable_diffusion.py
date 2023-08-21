@@ -1,9 +1,9 @@
-import requests
 import os
-from Extensions import Extensions
 from io import BytesIO
 import requests
 import numpy as np
+import base64
+import io
 
 try:
     from PIL import Image
@@ -16,11 +16,11 @@ except ImportError:
 import logging
 
 
-class stable_diffusion(Extensions):
+class stable_diffusion:
     def __init__(
         self,
-        STABLE_DIFFUSION_API_URL: str = "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4",
-        HUGGINGFACE_API_KEY: str = None,
+        STABLE_DIFFUSION_API_URL="https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4",
+        HUGGINGFACE_API_KEY=None,
         **kwargs,
     ):
         self.requirements = ["pillow"]
@@ -48,7 +48,7 @@ class stable_diffusion(Extensions):
         eta: int = 0,
         firstphase_height: int = 0,
         firstphase_width: int = 0,
-        height: int = 64,
+        height: int = 1080,
         n_iter: int = 1,
         restore_faces: bool = False,
         s_churn: int = 0,
@@ -59,18 +59,20 @@ class stable_diffusion(Extensions):
         seed: int = -1,
         seed_resize_from_h: int = -1,
         seed_resize_from_w: int = -1,
-        steps: int = 3,
+        steps: int = 20,
         styles: list = [],
         subseed: int = -1,
         subseed_strength: int = 0,
         tiling: bool = False,
-        width: int = 64,
+        width: int = 1920,
     ) -> str:
         if filename == "":
             filename = f"image_{np.random.randint(0, 1000000)}.png"
             if os.path.exists(os.path.join(self.WORKING_DIRECTORY, filename)):
                 filename = f"image_{np.random.randint(0, 1000000)}.png"
         image_path = os.path.join(self.WORKING_DIRECTORY, filename)
+
+        headers = {}
         if (
             self.STABLE_DIFFUSION_API_URL.startswith(
                 "https://api-inference.huggingface.co/models"
@@ -82,49 +84,52 @@ class stable_diffusion(Extensions):
                 "inputs": prompt,
             }
         else:
-            headers = {}
             self.STABLE_DIFFUSION_API_URL = (
                 f"{self.STABLE_DIFFUSION_API_URL}/sdapi/v1/txt2img"
             )
             generation_settings = {
                 "prompt": prompt,
                 "negative_prompt": negative_prompt,
-                "batch_size": batch_size,
-                "cfg_scale": cfg_scale,
-                "denoising_strength": denoising_strength,
-                "enable_hr": enable_hr,
-                "eta": eta,
-                "firstphase_height": firstphase_height,
-                "firstphase_width": firstphase_width,
-                "height": height,
-                "n_iter": n_iter,
-                "restore_faces": restore_faces,
-                "s_churn": s_churn,
-                "s_noise": s_noise,
-                "s_tmax": s_tmax,
-                "s_tmin": s_tmin,
-                "sampler_index": sampler_index,
-                "seed": seed,
-                "seed_resize_from_h": seed_resize_from_h,
-                "seed_resize_from_w": seed_resize_from_w,
-                "steps": steps,
-                "styles": styles,
-                "subseed": subseed,
-                "subseed_strength": subseed_strength,
-                "tiling": tiling,
-                "width": width,
+                "batch_size": batch_size if batch_size else 1,
+                "cfg_scale": cfg_scale if cfg_scale else 7,
+                "denoising_strength": denoising_strength if denoising_strength else 0,
+                "enable_hr": enable_hr if enable_hr else False,
+                "eta": eta if eta else 0,
+                "firstphase_height": firstphase_height if firstphase_height else 0,
+                "firstphase_width": firstphase_width if firstphase_width else 0,
+                "height": height if height else 1080,
+                "n_iter": n_iter if n_iter else 1,
+                "restore_faces": restore_faces if restore_faces else False,
+                "s_churn": s_churn if s_churn else 0,
+                "s_noise": s_noise if s_noise else 1,
+                "s_tmax": s_tmax if s_tmax else 0,
+                "s_tmin": s_tmin if s_tmin else 0,
+                "sampler_index": sampler_index if sampler_index else "Euler a",
+                "seed": seed if seed else -1,
+                "seed_resize_from_h": seed_resize_from_h if seed_resize_from_h else -1,
+                "seed_resize_from_w": seed_resize_from_w if seed_resize_from_w else -1,
+                "steps": steps if steps else 20,
+                "styles": styles if styles else [],
+                "subseed": subseed if subseed else -1,
+                "subseed_strength": subseed_strength if subseed_strength else 0,
+                "tiling": tiling if tiling else False,
+                "width": width if width else 1920,
             }
 
         try:
             response = requests.post(
                 self.STABLE_DIFFUSION_API_URL,
                 headers=headers,
-                json=generation_settings,
+                json=generation_settings,  # Use the 'json' parameter instead
             )
             if self.HUGGINGFACE_API_KEY is not None:
                 image = Image.open(BytesIO(response.content))
             else:
-                image = Image.open(image_path)
+                response = response.json()
+                image_data = response["images"][-1]
+                print(len(response["images"]))
+                image_data = base64.b64decode(image_data)
+                image = Image.open(io.BytesIO(image_data))
             logging.info(f"Image Generated for prompt: {prompt} at {image_path}.")
             image.save(image_path)
             return f"Stable Diffusion image saved to disk as {image_path}"
