@@ -67,8 +67,6 @@ class stable_diffusion(Extensions):
     ) -> str:
         image_path = f"./WORKSPACE/{filename}"
         headers = {}
-        if self.HUGGINGFACE_API_KEY == "":
-            self.STABLE_DIFFUSION_API_URL = "http://stable-diffusion:7861"
         if (
             self.STABLE_DIFFUSION_API_URL.startswith(
                 "https://api-inference.huggingface.co/models"
