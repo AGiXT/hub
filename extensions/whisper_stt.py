@@ -56,12 +56,13 @@ class whisper_stt:
             "large",
             "large-v1",
         ]:
-            WHISPER_MODEL = "base.en"
+            self.WHISPER_MODEL = "base.en"
+        else:
+            self.WHISPER_MODEL = WHISPER_MODEL
         os.makedirs(os.path.join(os.getcwd(), "models", "whispercpp"), exist_ok=True)
         model_path = os.path.join(
             os.getcwd(), "models", "whispercpp", f"ggml-{WHISPER_MODEL}.bin"
         )
-        self.WHISPER_MODEL = WHISPER_MODEL
         if not os.path.exists(model_path):
             r = requests.get(
                 f"https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-{WHISPER_MODEL}.bin",
@@ -81,7 +82,7 @@ class whisper_stt:
         print(f"The {duration_in_seconds} second recording was saved as '{filename}'.")
         return data
 
-    def read_audio_from_file(self, filename: str):
+    def read_audio_from_file(self, filename: str = "recording.wav"):
         w = Whisper.from_pretrained(
             model_name=self.WHISPER_MODEL, basedir=os.path.join(os.getcwd(), "models")
         )
