@@ -118,7 +118,7 @@ class stable_diffusion(Extensions):
                 headers=headers,
                 json=generation_settings,  # Use the 'json' parameter instead
             )
-            if self.HUGGINGFACE_API_KEY is not None:
+            if self.HUGGINGFACE_API_KEY != "":
                 image = Image.open(BytesIO(response.content))
             else:
                 response = response.json()
