@@ -230,10 +230,7 @@ class streamlabs_tts:
     ):
         self.USE_STREAMLABS_TTS = USE_STREAMLABS_TTS
 
-        if (
-            STREAMLABS_VOICE.lower() == "random"
-            or STREAMLABS_VOICE not in STREAMLABS_VOICES
-        ):
+        if STREAMLABS_VOICE not in STREAMLABS_VOICES:
             self.STREAMLABS_VOICE = random.choice(STREAMLABS_VOICES)
         else:
             self.STREAMLABS_VOICE = STREAMLABS_VOICE
