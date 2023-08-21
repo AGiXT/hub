@@ -21,7 +21,7 @@ class stable_diffusion(Extensions):
     def __init__(
         self,
         STABLE_DIFFUSION_API_URL="https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
-        HUGGINGFACE_API_KEY=None,
+        HUGGINGFACE_API_KEY="",
         **kwargs,
     ):
         self.requirements = ["pillow"]
@@ -72,7 +72,7 @@ class stable_diffusion(Extensions):
             self.STABLE_DIFFUSION_API_URL.startswith(
                 "https://api-inference.huggingface.co/models"
             )
-            and self.HUGGINGFACE_API_KEY is not None
+            and self.HUGGINGFACE_API_KEY != ""
         ):
             headers = {"Authorization": f"Bearer {self.HUGGINGFACE_API_KEY}"}
             generation_settings = {
