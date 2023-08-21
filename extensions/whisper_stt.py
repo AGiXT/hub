@@ -15,22 +15,6 @@ except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "whispercpp"])
     from whispercpp import Whisper
 
-try:
-    import sounddevice as sd
-except ImportError:
-    import sys
-    import subprocess
-
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "sounddevice"])
-    import sounddevice as sd
-try:
-    import soundfile as sf
-except ImportError:
-    import sys
-    import subprocess
-
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "soundfile"])
-    import soundfile as sf
 import requests
 import os
 import numpy as np
@@ -39,7 +23,6 @@ import numpy as np
 class whisper_stt:
     def __init__(self, WHISPER_MODEL="base.en"):
         self.commands = {
-            "Record Audio and Convert to Text": self.record_and_convert_to_text,
             "Read Audio from File": self.read_audio_from_file,
         }
         # https://huggingface.co/ggerganov/whisper.cpp
@@ -70,18 +53,6 @@ class whisper_stt:
             )
             open(model_path, "wb").write(r.content)
 
-    def record_audio(self, duration_in_seconds: int = 10, filename="recording.wav"):
-        if not filename.startswith(os.path.join(os.getcwd(), "WORKSPACE")):
-            filename = os.path.join(os.getcwd(), "WORKSPACE", filename)
-        samplerate = 44100
-        data = sd.rec(
-            frames=duration_in_seconds * samplerate, samplerate=samplerate, channels=1
-        )
-        sd.wait()
-        sf.write(filename, data=data, samplerate=samplerate)
-        print(f"The {duration_in_seconds} second recording was saved as '{filename}'.")
-        return data
-
     def read_audio_from_file(self, filename: str = "recording.wav"):
         w = Whisper.from_pretrained(
             model_name=self.WHISPER_MODEL, basedir=os.path.join(os.getcwd(), "models")
@@ -101,14 +72,3 @@ class whisper_stt:
 
         arr = np.frombuffer(y, np.int16).flatten().astype(np.float32) / 32768.0
         return w.transcribe(arr)
-
-    def record_and_convert_to_text(
-        self, duration_in_seconds: int = 10, filename="recording.wav"
-    ):
-        if not filename.startswith(os.path.join(os.getcwd(), "WORKSPACE")):
-            filename = os.path.join(os.getcwd(), "WORKSPACE", filename)
-        data = self.record_audio(
-            duration_in_seconds=duration_in_seconds, filename=filename
-        )
-        text = self.read_audio_from_file(filename=filename)
-        return text
