@@ -67,6 +67,9 @@ class stable_diffusion(Extensions):
     ) -> str:
         image_path = f"./WORKSPACE/{filename}"
         headers = {}
+        logging.info(f"Generating image for prompt: {prompt}")
+        logging.info(f"Hugging Face API Key: {self.HUGGINGFACE_API_KEY}")
+        logging.info(f"Stable Diffusion API URL: {self.STABLE_DIFFUSION_API_URL}")
         if (
             self.STABLE_DIFFUSION_API_URL.startswith(
                 "https://api-inference.huggingface.co/models"
