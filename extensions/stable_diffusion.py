@@ -129,7 +129,6 @@ class stable_diffusion:
             else:
                 response = response.json()
                 image_data = response["images"][-1]
-                print(len(response["images"]))
                 image_data = base64.b64decode(image_data)
                 image = Image.open(io.BytesIO(image_data))
             logging.info(f"Image Generated for prompt: {prompt} at {image_path}.")
