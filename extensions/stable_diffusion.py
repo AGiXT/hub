@@ -30,9 +30,7 @@ class stable_diffusion(Extensions):
             if STABLE_DIFFUSION_API_URL
             else "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
         )
-        self.WORKING_DIRECTORY = os.path.join(os.getcwd(), "WORKSPACE")
         self.HUGGINGFACE_API_KEY = HUGGINGFACE_API_KEY
-        os.makedirs(self.WORKING_DIRECTORY, exist_ok=True)
         self.commands = {
             "Generate Image with Stable Diffusion": self.generate_image,
         }
@@ -69,9 +67,7 @@ class stable_diffusion(Extensions):
     ) -> str:
         if filename == "":
             filename = f"image_{np.random.randint(0, 1000000)}.png"
-            if os.path.exists(os.path.join(self.WORKING_DIRECTORY, filename)):
-                filename = f"image_{np.random.randint(0, 1000000)}.png"
-        image_path = os.path.join(self.WORKING_DIRECTORY, filename)
+        image_path = os.path.join(os.getcwd(), "WORKSPACE", filename)
 
         headers = {}
         if (
