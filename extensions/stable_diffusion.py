@@ -1,5 +1,6 @@
 import os
 from io import BytesIO
+from Extensions import Extensions
 import requests
 import numpy as np
 import base64
@@ -16,7 +17,7 @@ except ImportError:
 import logging
 
 
-class stable_diffusion:
+class stable_diffusion(Extensions):
     def __init__(
         self,
         STABLE_DIFFUSION_API_URL="https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",

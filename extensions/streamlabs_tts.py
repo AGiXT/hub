@@ -1,6 +1,7 @@
 import os
 import requests
 import random
+from Extensions import Extensions
 
 try:
     from playsound import playsound
@@ -221,7 +222,7 @@ STREAMLABS_VOICES = [
 ]
 
 
-class streamlabs_tts:
+class streamlabs_tts(Extensions):
     def __init__(
         self,
         USE_STREAMLABS_TTS: bool = True,
