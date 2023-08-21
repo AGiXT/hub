@@ -61,15 +61,13 @@ class whisper_stt:
         model_path = os.path.join(
             os.getcwd(), "models", "whispercpp", f"ggml-{WHISPER_MODEL}.bin"
         )
+        self.WHISPER_MODEL = WHISPER_MODEL
         if not os.path.exists(model_path):
             r = requests.get(
                 f"https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-{WHISPER_MODEL}.bin",
                 allow_redirects=True,
             )
             open(model_path, "wb").write(r.content)
-        self.w = Whisper.from_pretrained(
-            model_name=WHISPER_MODEL, basedir=os.path.join(os.getcwd(), "models")
-        )
 
     def record_audio(self, duration_in_seconds: int = 10, filename="recording.wav"):
         if not filename.startswith(os.path.join(os.getcwd(), "WORKSPACE")):
@@ -84,6 +82,9 @@ class whisper_stt:
         return data
 
     def read_audio_from_file(self, filename: str):
+        w = Whisper.from_pretrained(
+            model_name=self.WHISPER_MODEL, basedir=os.path.join(os.getcwd(), "models")
+        )
         if not filename.startswith(os.path.join(os.getcwd(), "WORKSPACE")):
             filename = os.path.join(os.getcwd(), "WORKSPACE", filename)
         try:
@@ -98,8 +99,7 @@ class whisper_stt:
             raise RuntimeError(f"Failed to load audio: {e.stderr.decode()}") from e
 
         arr = np.frombuffer(y, np.int16).flatten().astype(np.float32) / 32768.0
-
-        return self.w.transcribe(arr)
+        return w.transcribe(arr)
 
     def record_and_convert_to_text(
         self, duration_in_seconds: int = 10, filename="recording.wav"
