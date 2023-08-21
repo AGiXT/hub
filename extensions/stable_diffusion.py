@@ -19,7 +19,7 @@ import logging
 class stable_diffusion:
     def __init__(
         self,
-        STABLE_DIFFUSION_API_URL="https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4",
+        STABLE_DIFFUSION_API_URL="https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
         HUGGINGFACE_API_KEY=None,
         **kwargs,
     ):
@@ -27,7 +27,7 @@ class stable_diffusion:
         self.STABLE_DIFFUSION_API_URL = (
             STABLE_DIFFUSION_API_URL
             if STABLE_DIFFUSION_API_URL
-            else "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4"
+            else "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
         )
         self.WORKING_DIRECTORY = os.path.join(os.getcwd(), "WORKSPACE")
         self.HUGGINGFACE_API_KEY = HUGGINGFACE_API_KEY
