@@ -14,12 +14,16 @@ class huggingface(Extensions):
     ):
         self.requirements = ["pillow"]
         self.HUGGINGFACE_API_KEY = HUGGINGFACE_API_KEY
-        self.HUGGINGFACE_AUDIO_TO_TEXT_MODEL = HUGGINGFACE_AUDIO_TO_TEXT_MODEL
+        self.HUGGINGFACE_AUDIO_TO_TEXT_MODEL = (
+            HUGGINGFACE_AUDIO_TO_TEXT_MODEL
+            if HUGGINGFACE_AUDIO_TO_TEXT_MODEL
+            else "facebook/wav2vec2-large-960h-lv60-self"
+        )
         self.WORKING_DIRECTORY = os.path.join(os.getcwd(), "WORKSPACE")
         if self.HUGGINGFACE_API_KEY is not None:
             self.commands = {
-                "Read Audio from File": self.read_audio_from_file,
-                "Read Audio": self.read_audio,
+                "Read Audio from File with Huggingface": self.read_audio_from_file,
+                "Read Audio with Huggingface": self.read_audio,
             }
 
     async def read_audio_from_file(self, audio_path: str):
@@ -29,19 +33,13 @@ class huggingface(Extensions):
         return await self.read_audio(audio)
 
     async def read_audio(self, audio):
-        model = self.HUGGINGFACE_AUDIO_TO_TEXT_MODEL
-        api_url = f"https://api-inference.huggingface.co/models/{model}"
-        api_token = self.HUGGINGFACE_API_KEY
-        headers = {"Authorization": f"Bearer {api_token}"}
-
-        if api_token is None:
+        if self.HUGGINGFACE_API_KEY is None:
             raise ValueError(
                 "You need to set your Hugging Face API token in the config file."
             )
-
         response = requests.post(
-            api_url,
-            headers=headers,
+            f"https://api-inference.huggingface.co/models/{self.HUGGINGFACE_AUDIO_TO_TEXT_MODEL}",
+            headers={"Authorization": f"Bearer {self.HUGGINGFACE_API_KEY}"},
             data=audio,
         )
 
