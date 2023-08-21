@@ -48,14 +48,14 @@ class stable_diffusion:
         eta: int = 0,
         firstphase_height: int = 0,
         firstphase_width: int = 0,
-        height: int = 1080,
+        height: int = 512,
         n_iter: int = 1,
-        restore_faces: bool = False,
+        restore_faces: bool = True,
         s_churn: int = 0,
         s_noise: int = 1,
         s_tmax: int = 0,
         s_tmin: int = 0,
-        sampler_index: str = "Euler a",
+        sampler_index: str = "DPM++ SDE Karras",
         seed: int = -1,
         seed_resize_from_h: int = -1,
         seed_resize_from_w: int = -1,
@@ -64,7 +64,7 @@ class stable_diffusion:
         subseed: int = -1,
         subseed_strength: int = 0,
         tiling: bool = False,
-        width: int = 1920,
+        width: int = 768,
     ) -> str:
         if filename == "":
             filename = f"image_{np.random.randint(0, 1000000)}.png"
