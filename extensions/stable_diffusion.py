@@ -65,8 +65,7 @@ class stable_diffusion(Extensions):
         tiling: bool = False,
         width: int = 768,
     ) -> str:
-        image_path = os.path.join(os.getcwd(), "WORKSPACE", filename)
-
+        image_path = f"./WORKSPACE/{filename}"
         headers = {}
         if (
             self.STABLE_DIFFUSION_API_URL.startswith(
