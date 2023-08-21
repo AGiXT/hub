@@ -3,6 +3,7 @@ import os
 from Extensions import Extensions
 from io import BytesIO
 import requests
+import numpy as np
 
 try:
     from PIL import Image
@@ -38,7 +39,7 @@ class stable_diffusion(Extensions):
     async def generate_image(
         self,
         prompt: str,
-        filename: str,
+        filename: str = "",
         negative_prompt: str = "",
         batch_size: int = 1,
         cfg_scale: int = 7,
@@ -65,6 +66,10 @@ class stable_diffusion(Extensions):
         tiling: bool = False,
         width: int = 64,
     ) -> str:
+        if filename == "":
+            filename = f"image_{np.random.randint(0, 1000000)}.png"
+            if os.path.exists(os.path.join(self.WORKING_DIRECTORY, filename)):
+                filename = f"image_{np.random.randint(0, 1000000)}.png"
         image_path = os.path.join(self.WORKING_DIRECTORY, filename)
         if (
             self.STABLE_DIFFUSION_API_URL.startswith(
@@ -116,7 +121,10 @@ class stable_diffusion(Extensions):
                 headers=headers,
                 json=generation_settings,
             )
-            image = Image.open(BytesIO(response.content))
+            if self.HUGGINGFACE_API_KEY is not None:
+                image = Image.open(BytesIO(response.content))
+            else:
+                image = Image.open(image_path)
             logging.info(f"Image Generated for prompt: {prompt} at {image_path}.")
             image.save(image_path)
             return f"Stable Diffusion image saved to disk as {image_path}"
