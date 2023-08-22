@@ -25,12 +25,10 @@ class github(Extensions):
         self,
         GITHUB_USERNAME: str = "",
         GITHUB_API_KEY: str = "",
-        WORKING_DIRECTORY: str = "./WORKSPACE",
         **kwargs,
     ):
         self.GITHUB_USERNAME = GITHUB_USERNAME
         self.GITHUB_API_KEY = GITHUB_API_KEY
-        self.WORKING_DIRECTORY = WORKING_DIRECTORY
         self.commands = {"Clone Github Repository": self.clone_repo}
         if self.GITHUB_USERNAME and self.GITHUB_API_KEY:
             self.commands["Create Github Repository"] = self.create_repo
@@ -45,7 +43,7 @@ class github(Extensions):
             auth_repo_url = "//".join(split_url)
         try:
             repo_name = repo_url.split("/")[-1]
-            repo_dir = os.path.join(self.WORKING_DIRECTORY, repo_name)
+            repo_dir = os.path.join("./WORKSPACE", repo_name)
             if os.path.exists(repo_dir):
                 return f"""{repo_dir} already exists"""
             git.Repo.clone_from(
