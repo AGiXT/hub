@@ -22,7 +22,7 @@ from Extensions import Extensions
 
 
 class whisper_stt(Extensions):
-    def __init__(self, WHISPER_MODEL="base.en"):
+    def __init__(self, WHISPER_MODEL="base.en", **kwargs):
         self.commands = {
             "Read Audio from File": self.read_audio_from_file,
         }
