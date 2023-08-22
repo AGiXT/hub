@@ -23,16 +23,25 @@ class elevenlabs(Extensions):
         self.ELEVENLABS_VOICE = ELEVENLABS_VOICE
         self.commands = {"Speak with TTS Using Elevenlabs": self.speak_with_elevenlabs}
 
-    async def speak_with_elevenlabs(self, text: str, voice_index: int = 0) -> bool:
-        voices = ["ErXwobaYiN019PkySvjV", "EXAVITQu4vr4xnSDxMaL"]
+    async def speak_with_elevenlabs(self, text: str) -> bool:
         headers = {
             "Content-Type": "application/json",
             "xi-api-key": self.ELEVENLABS_VOICE,
         }
-
-        tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{voices[voice_index]}"
-        response = requests.post(tts_url, headers=headers, json={"text": text})
-
+        try:
+            response = requests.post(
+                f"https://api.elevenlabs.io/v1/text-to-speech/{self.ELEVENLABS_VOICE}",
+                headers=headers,
+                json={"text": text},
+            )
+            response.raise_for_status()
+        except:
+            self.ELEVENLABS_VOICE = "ErXwobaYiN019PkySvjV"
+            response = requests.post(
+                f"https://api.elevenlabs.io/v1/text-to-speech/{self.ELEVENLABS_VOICE}",
+                headers=headers,
+                json={"text": text},
+            )
         if response.status_code == 200:
             with open("speech.mpeg", "wb") as f:
                 f.write(response.content)
