@@ -67,6 +67,7 @@ class agixt_actions(Extensions):
     def __init__(self, **kwargs):
         # self.chains = ApiClient.get_chains()
         # agents = ApiClient.get_agents()
+        self.agent = self.agent_name if self.agent_name else "gpt4free"
         self.commands = {
             "Create Task Chain": self.create_task_chain,
             "Generate Extension from OpenAPI": self.generate_openapi_chain,
@@ -121,7 +122,7 @@ class agixt_actions(Extensions):
         for task in task_list:
             ApiClient.add_step(
                 chain_name=chain_name,
-                agent_name=agent,
+                agent_name=self.agent,
                 step_number=i,
                 prompt_type="Chain",
                 prompt={
@@ -137,7 +138,7 @@ class agixt_actions(Extensions):
                     step_chain = "Smart Instruct - No Research"
                 ApiClient.add_step(
                     chain_name=chain_name,
-                    agent_name=agent,
+                    agent_name=self.agent,
                     step_number=i,
                     prompt_type="Chain",
                     prompt={
@@ -148,7 +149,7 @@ class agixt_actions(Extensions):
             else:
                 ApiClient.add_step(
                     chain_name=chain_name,
-                    agent_name=agent,
+                    agent_name=self.agent,
                     step_number=i,
                     prompt_type="Prompt",
                     prompt={
@@ -257,7 +258,7 @@ class agixt_actions(Extensions):
             i += 1
             ApiClient.add_step(
                 chain_name=chain_name,
-                agent_name=agent,
+                agent_name=self.agent,
                 step_number=i,
                 prompt_type="Prompt",
                 prompt={
@@ -268,7 +269,7 @@ class agixt_actions(Extensions):
             i += 1
             ApiClient.add_step(
                 chain_name=chain_name,
-                agent_name=agent,
+                agent_name=self.agent,
                 step_number=i,
                 prompt_type="Command",
                 prompt={
@@ -279,7 +280,7 @@ class agixt_actions(Extensions):
             i += 1
             ApiClient.add_step(
                 chain_name=chain_name,
-                agent_name=agent,
+                agent_name=self.agent,
                 step_number=i,
                 prompt_type="Command",
                 prompt={
@@ -291,7 +292,7 @@ class agixt_actions(Extensions):
             i += 1
             ApiClient.add_step(
                 chain_name=chain_name,
-                agent_name=agent,
+                agent_name=self.agent,
                 step_number=i,
                 prompt_type="Command",
                 prompt={
@@ -303,7 +304,7 @@ class agixt_actions(Extensions):
         i += 1
         ApiClient.add_step(
             chain_name=chain_name,
-            agent_name=agent,
+            agent_name=self.agent,
             step_number=i,
             prompt_type="Command",
             prompt={
@@ -314,7 +315,7 @@ class agixt_actions(Extensions):
         i += 1
         ApiClient.add_step(
             chain_name=chain_name,
-            agent_name=agent,
+            agent_name=self.agent,
             step_number=i,
             prompt_type="Command",
             prompt={
@@ -332,7 +333,7 @@ class agixt_actions(Extensions):
         i += 1
         ApiClient.add_step(
             chain_name=chain_name,
-            agent_name=agent,
+            agent_name=self.agent,
             step_number=i,
             prompt_type="Command",
             prompt={
@@ -388,7 +389,7 @@ class agixt_actions(Extensions):
             return ApiClient.run_chain(
                 chain_name="Create New Command",
                 user_input=function_description,
-                agent_name=agent,
+                agent_name=self.agent,
                 all_responses=False,
                 from_step=1,
             )
@@ -397,7 +398,7 @@ class agixt_actions(Extensions):
 
     async def ask(self, user_input: str, agent: str = "AGiXT") -> str:
         response = ApiClient.prompt_agent(
-            agent_name=agent,
+            agent_name=self.agent,
             prompt_name="Chat",
             prompt_args={
                 "user_input": user_input,
@@ -409,7 +410,7 @@ class agixt_actions(Extensions):
 
     async def instruct(self, user_input: str, agent: str = "AGiXT") -> str:
         response = ApiClient.prompt_agent(
-            agent_name=agent,
+            agent_name=self.agent,
             prompt_name="instruct",
             prompt_args={
                 "user_input": user_input,
@@ -452,7 +453,7 @@ class agixt_actions(Extensions):
 
     async def get_mindmap(self, task: str, agent: str = "AGiXT"):
         mindmap = ApiClient.prompt_agent(
-            agent_name=agent,
+            agent_name=self.agent,
             prompt_name="Mindmap",
             prompt_args={"user_input": task},
         )
