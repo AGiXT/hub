@@ -31,14 +31,14 @@ class postgres_database(Extensions):
         self.POSTGRES_DATABASE_PASSWORD = POSTGRES_DATABASE_PASSWORD
 
         self.commands = {
-            "Create Table": self.create_table,
-            "Insert Row": self.insert_row,
-            "Select Rows": self.select_rows,
-            "Update Rows": self.update_rows,
-            "Delete Rows": self.delete_rows,
-            "Custom SQL Query": self.execute_sql,
-            "Get Database Schema": self.get_schema,
-            "Get Table Schema": self.get_table_schema,
+            "Create Table in Postgres Database": self.create_table,
+            "Insert Row in Postgres Database": self.insert_row,
+            "Select Rows in Postgres Database": self.select_rows,
+            "Update Rows in Postgres Database": self.update_rows,
+            "Delete Rows in Postgres Database": self.delete_rows,
+            "Custom SQL Query in Postgres Database": self.execute_sql,
+            "Get Database Schema from Postgres Database": self.get_schema,
+            "Get Table Schema from Postgres Database": self.get_table_schema,
         }
 
     async def create_table(self, table_name: str, columns: str):
