@@ -17,11 +17,11 @@ from Extensions import Extensions
 class postgres_database(Extensions):
     def __init__(
         self,
-        POSTGRES_DATABASE_NAME: str,
-        POSTGRES_DATABASE_HOST: str,
-        POSTGRES_DATABASE_PORT: int,
-        POSTGRES_DATABASE_USERNAME: str,
-        POSTGRES_DATABASE_PASSWORD: str,
+        POSTGRES_DATABASE_NAME: str = "",
+        POSTGRES_DATABASE_HOST: str = "",
+        POSTGRES_DATABASE_PORT: int = 5432,
+        POSTGRES_DATABASE_USERNAME: str = "",
+        POSTGRES_DATABASE_PASSWORD: str = "",
         **kwargs,
     ):
         self.POSTGRES_DATABASE_NAME = POSTGRES_DATABASE_NAME
