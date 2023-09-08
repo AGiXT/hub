@@ -81,6 +81,9 @@ class agixt_actions(Extensions):
             "Get Python Code from Response": self.get_python_code_from_response,
             "Get Mindmap for task to break it down": self.get_mindmap,
         }
+        chains = ApiClient.get_chains()
+        for chain in chains:
+            self.commands[f"Execute Task `{chain}`"] = self.run_chain
 
     async def create_task_chain(
         self,
@@ -166,9 +169,13 @@ class agixt_actions(Extensions):
             i += 1
         return chain_name
 
-    async def run_chain(self, chain: str = "", input: str = ""):
-        await ApiClient.run_chain(chain_name=chain, user_input=input)
-        return "Chain started successfully."
+    async def run_chain(self, task_name: str = "", input_for_task: str = ""):
+        response = await ApiClient.run_chain(
+            chain_name=task_name,
+            user_input=input_for_task,
+            agent_name=self.agent,
+        )
+        return response
 
     def parse_openapi(self, data):
         endpoints = []
