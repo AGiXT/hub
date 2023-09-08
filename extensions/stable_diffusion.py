@@ -127,7 +127,7 @@ class stable_diffusion(Extensions):
                 image = Image.open(io.BytesIO(image_data))
             logging.info(f"Image Generated for prompt: {prompt} at {image_path}.")
             image.save(image_path)
-            return f"Stable Diffusion image saved to disk as {image_path}"
+            return f"#GENERATED_IMAGE:{image}"
         except Exception as e:
             logging.error(f"Error generating image: {e}")
             return f"Error generating image: {e}"
