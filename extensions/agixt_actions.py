@@ -67,7 +67,10 @@ class agixt_actions(Extensions):
     def __init__(self, **kwargs):
         # self.chains = ApiClient.get_chains()
         # agents = ApiClient.get_agents()
-        self.agent = self.agent_name if self.agent_name else "gpt4free"
+        try:
+            self.agent = self.agent_name if self.agent_name else "gpt4free"
+        except:
+            self.agent = "gpt4free"
         self.commands = {
             "Create Task Chain": self.create_task_chain,
             "Generate Extension from OpenAPI": self.generate_openapi_chain,
