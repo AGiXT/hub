@@ -127,7 +127,10 @@ class stable_diffusion(Extensions):
                 image = Image.open(io.BytesIO(image_data))
             logging.info(f"Image Generated for prompt: {prompt} at {image_path}.")
             image.save(image_path)
-            return f"#GENERATED_IMAGE:{image}"
+            encoded_image_data = base64.b64encode(
+                io.BytesIO(image_data).getvalue()
+            ).decode("utf-8")
+            return f"#GENERATED_IMAGE:{encoded_image_data}"
         except Exception as e:
             logging.error(f"Error generating image: {e}")
             return f"Error generating image: {e}"
