@@ -44,6 +44,6 @@ class elevenlabs(Extensions):
             )
         if response.status_code == 200:
             # Return the base64 audio/wav
-            return f"GENERATED_AUDIO:{response.content.decode('utf-8')}"
+            return f"#GENERATED_AUDIO:{response.content.decode('utf-8')}"
         else:
             return "Failed to generate audio."
