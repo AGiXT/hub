@@ -85,7 +85,7 @@ class agixt_actions(Extensions):
         )
         self.agent_name = kwargs["agent_name"] if "agent_name" in kwargs else "gpt4free"
         self.conversation_name = (
-            kwargs["conversation_name"] if "conversation_name" else ""
+            kwargs["conversation_name"] if "conversation_name" in kwargs else ""
         )
 
     async def create_task_chain(
