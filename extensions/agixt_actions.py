@@ -84,6 +84,9 @@ class agixt_actions(Extensions):
             kwargs["command_name"] if "command_name" in kwargs else "Smart Prompt"
         )
         self.agent_name = kwargs["agent_name"] if "agent_name" in kwargs else "gpt4free"
+        self.conversation_name = (
+            kwargs["conversation_name"] if "conversation_name" else ""
+        )
 
     async def create_task_chain(
         self,
@@ -174,6 +177,9 @@ class agixt_actions(Extensions):
             chain_name=self.command_name,
             user_input=input_for_task,
             agent_name=self.agent_name,
+            chain_args={
+                "conversation_name": self.conversation_name,
+            },
         )
         return response
 
@@ -390,6 +396,9 @@ class agixt_actions(Extensions):
             agent_name=your_agent_name,
             all_responses=False,
             from_step=1,
+            chain_args={
+                "conversation_name": self.conversation_name,
+            },
         )
 
     async def create_command(
@@ -402,11 +411,14 @@ class agixt_actions(Extensions):
                 agent_name=self.agent_name,
                 all_responses=False,
                 from_step=1,
+                chain_args={
+                    "conversation_name": self.conversation_name,
+                },
             )
         except Exception as e:
             return f"Unable to create command: {e}"
 
-    async def ask(self, user_input: str, agent: str = "AGiXT") -> str:
+    async def ask(self, user_input: str) -> str:
         response = ApiClient.prompt_agent(
             agent_name=self.agent_name,
             prompt_name="Chat",
@@ -414,11 +426,12 @@ class agixt_actions(Extensions):
                 "user_input": user_input,
                 "websearch": True,
                 "websearch_depth": 3,
+                "conversation_name": self.conversation_name,
             },
         )
         return response
 
-    async def instruct(self, user_input: str, agent: str = "AGiXT") -> str:
+    async def instruct(self, user_input: str) -> str:
         response = ApiClient.prompt_agent(
             agent_name=self.agent_name,
             prompt_name="instruct",
@@ -426,6 +439,7 @@ class agixt_actions(Extensions):
                 "user_input": user_input,
                 "websearch": True,
                 "websearch_depth": 3,
+                "conversation_name": self.conversation_name,
             },
         )
         return response
@@ -461,10 +475,13 @@ class agixt_actions(Extensions):
         # Decode the output from bytes to string and return it
         return response.decode("utf-8")
 
-    async def get_mindmap(self, task: str, agent: str = "AGiXT"):
+    async def get_mindmap(self, task: str):
         mindmap = ApiClient.prompt_agent(
             agent_name=self.agent_name,
             prompt_name="Mindmap",
-            prompt_args={"user_input": task},
+            prompt_args={
+                "user_input": task,
+                "conversation_name": self.conversation_name,
+            },
         )
         return parse_mindmap(mindmap=mindmap)
