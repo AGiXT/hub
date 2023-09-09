@@ -119,17 +119,17 @@ class stable_diffusion(Extensions):
                 json=generation_settings,  # Use the 'json' parameter instead
             )
             if self.HUGGINGFACE_API_KEY != "":
-                image = Image.open(BytesIO(response.content))
+                image_data = response.content
             else:
                 response = response.json()
-                image_data = response["images"][-1]
-                image_data = base64.b64decode(image_data)
-                image = Image.open(io.BytesIO(image_data))
+                image_data = base64.b64decode(response["images"][-1])
+
+            image = Image.open(io.BytesIO(image_data))
             logging.info(f"Image Generated for prompt: {prompt} at {image_path}.")
-            image.save(image_path)
-            encoded_image_data = base64.b64encode(
-                io.BytesIO(image_data).getvalue()
-            ).decode("utf-8")
+            image.save(image_path)  # Save the image locally if required
+
+            # Convert image_data to base64 string
+            encoded_image_data = base64.b64encode(image_data).decode("utf-8")
             return f"#GENERATED_IMAGE:{encoded_image_data}"
         except Exception as e:
             logging.error(f"Error generating image: {e}")
