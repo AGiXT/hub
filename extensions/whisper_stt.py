@@ -15,6 +15,7 @@ except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "whispercpp"])
     from whispercpp import Whisper
 
+import base64
 import requests
 import os
 import numpy as np
@@ -24,7 +25,8 @@ from Extensions import Extensions
 class whisper_stt(Extensions):
     def __init__(self, WHISPER_MODEL="base.en", **kwargs):
         self.commands = {
-            "Read Audio from File": self.read_audio_from_file,
+            "Transcribe Audio from File": self.transcribe_audio_from_file,
+            "Transcribe Base64 Audio": self.transcribe_base64_audio,
         }
         # https://huggingface.co/ggerganov/whisper.cpp
         # Models: tiny, tiny.en, base, base.en, small, small.en, medium, medium.en, large, large-v1
@@ -54,7 +56,7 @@ class whisper_stt(Extensions):
             )
             open(model_path, "wb").write(r.content)
 
-    def read_audio_from_file(self, filename: str = "recording.wav"):
+    def transcribe_audio_from_file(self, filename: str = "recording.wav"):
         w = Whisper.from_pretrained(
             model_name=self.WHISPER_MODEL, basedir=os.path.join(os.getcwd(), "models")
         )
@@ -72,4 +74,16 @@ class whisper_stt(Extensions):
             raise RuntimeError(f"Failed to load audio: {e.stderr.decode()}") from e
 
         arr = np.frombuffer(y, np.int16).flatten().astype(np.float32) / 32768.0
+        return w.transcribe(arr)
+
+    def transcribe_base64_audio(self, base64_audio: str):
+        w = Whisper.from_pretrained(
+            model_name=self.WHISPER_MODEL, basedir=os.path.join(os.getcwd(), "models")
+        )
+        arr = (
+            np.frombuffer(base64.b64decode(base64_audio), np.int16)
+            .flatten()
+            .astype(np.float32)
+            / 32768.0
+        )
         return w.transcribe(arr)

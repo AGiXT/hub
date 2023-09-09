@@ -24,6 +24,7 @@ class huggingface(Extensions):
             self.commands = {
                 "Read Audio from File with Huggingface": self.read_audio_from_file,
                 "Read Audio with Huggingface": self.read_audio,
+                "Transcribe Base64 Audio with Huggingface": self.transcribe_base64_audio,
             }
 
     async def read_audio_from_file(self, audio_path: str):
@@ -44,4 +45,18 @@ class huggingface(Extensions):
         )
 
         text = json.loads(response.content.decode("utf-8"))["text"]
-        return "The audio says: " + text
+        return text
+
+    async def transcribe_base64_audio(self, audio: str):
+        if self.HUGGINGFACE_API_KEY is None:
+            raise ValueError(
+                "You need to set your Hugging Face API token in the config file."
+            )
+        response = requests.post(
+            f"https://api-inference.huggingface.co/models/{self.HUGGINGFACE_AUDIO_TO_TEXT_MODEL}",
+            headers={"Authorization": f"Bearer {self.HUGGINGFACE_API_KEY}"},
+            data=audio,
+        )
+
+        text = json.loads(response.content.decode("utf-8"))["text"]
+        return text

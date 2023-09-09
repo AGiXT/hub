@@ -1,6 +1,6 @@
-from base64 import b64decode
 from Extensions import Extensions
 import logging
+import base64
 
 try:
     import openai
@@ -36,7 +36,9 @@ class dalle(Extensions):
             response_format="b64_json",
         )
         logging.info(f"Image Generated for prompt:{prompt}")
-        image_data = b64decode(response["data"][0]["b64_json"])
+        image_data = base64.b64decode(response["data"][0]["b64_json"])
         with open(image_path, mode="wb") as png:
             png.write(image_data)
-        return f"Saved to disk:{filename}"
+        # REturn base64 image
+        encoded_image_data = base64.b64encode(image_data).decode("utf-8")
+        return f"#GENERATED_IMAGE:{encoded_image_data}"

@@ -33,6 +33,8 @@ class gtts(Extensions):
     async def speak_with_gtts(self, text: str) -> bool:
         tts = ts.gTTS(text)
         tts.save("speech.mp3")
-        playsound("speech.mp3", True)
+        with open("speech.mp3", "rb") as f:
+            audio = f.read()
         os.remove("speech.mp3")
-        return True
+        audio = audio.decode("utf-8")
+        return f"#GENERATED_AUDIO:{audio}"

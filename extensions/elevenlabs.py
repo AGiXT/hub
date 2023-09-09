@@ -43,10 +43,7 @@ class elevenlabs(Extensions):
                 json={"text": text},
             )
         if response.status_code == 200:
-            with open("speech.mpeg", "wb") as f:
-                f.write(response.content)
-            playsound("speech.mpeg", True)
-            os.remove("speech.mpeg")
-            return True
+            # Return the base64 audio/wav
+            return f"GENERATED_AUDIO:{response.content.decode('utf-8')}"
         else:
-            return False
+            return "Failed to generate audio."
