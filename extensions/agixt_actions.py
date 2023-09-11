@@ -177,6 +177,8 @@ class agixt_actions(Extensions):
             chain_name=self.command_name,
             user_input=input_for_task,
             agent_name=self.agent_name,
+            all_responses=False,
+            from_step=1,
             chain_args={
                 "conversation_name": self.conversation_name,
             },
