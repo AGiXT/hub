@@ -63,6 +63,9 @@ def parse_mindmap(mindmap):
     return root
 
 
+chains = ApiClient.get_chains()
+
+
 class agixt_actions(Extensions):
     def __init__(self, **kwargs):
         # self.chains = ApiClient.get_chains()
@@ -76,8 +79,13 @@ class agixt_actions(Extensions):
             "Execute Python Code": self.execute_python_code,
             "Get Python Code from Response": self.get_python_code_from_response,
             "Get Mindmap for task to break it down": self.get_mindmap,
+            "Store information in my long term memory": self.store_long_term_memory,
+            "Research on arXiv": self.search_arxiv,
+            "Read GitHub Repository into long term memory": self.read_github_repository,
+            "Read Website Content into long term memory": self.write_website_to_memory,
+            "Read non-image file content into long term memory": self.read_file_content,
         }
-        chains = ApiClient.get_chains()
+
         for chain in chains:
             self.commands[chain] = self.run_chain
         self.command_name = (
@@ -86,6 +94,49 @@ class agixt_actions(Extensions):
         self.agent_name = kwargs["agent_name"] if "agent_name" in kwargs else "gpt4free"
         self.conversation_name = (
             kwargs["conversation_name"] if "conversation_name" in kwargs else ""
+        )
+
+    async def read_file_content(self, file_path: str):
+        with open(file_path, "r") as f:
+            file_content = f.read()
+        filename = os.path.basename(file_path)
+        return ApiClient.learn_file(
+            agent_name=self.agent_name,
+            file_name=filename,
+            file_content=file_content,
+            collection_number=0,
+        )
+
+    async def write_website_to_memory(self, url: str):
+        return ApiClient.learn_url(
+            agent_name=self.agent_name,
+            url=url,
+            collection_number=0,
+        )
+
+    async def store_long_term_memory(
+        self, input: str, data_to_correlate_with_input: str
+    ):
+        return ApiClient.learn_text(
+            agent_name=self.agent_name,
+            user_input=input,
+            text=data_to_correlate_with_input,
+        )
+
+    async def search_arxiv(self, query: str, max_articles: int = 5):
+        return ApiClient.learn_arxiv(
+            query=query,
+            article_ids=None,
+            max_articles=max_articles,
+            collection_number=0,
+        )
+
+    async def read_github_repository(self, repository_url: str):
+        return ApiClient.learn_github_repo(
+            agent_name=self.agent_name,
+            github_repo=repository_url,
+            use_agent_settings=True,
+            collection_number=0,
         )
 
     async def create_task_chain(
