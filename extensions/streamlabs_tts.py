@@ -1,16 +1,6 @@
-import os
 import requests
 import random
 from Extensions import Extensions
-
-try:
-    from playsound import playsound
-except ImportError:
-    import sys
-    import subprocess
-
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "playsound==1.2.2"])
-    from playsound import playsound
 
 STREAMLABS_VOICES = [
     "Filiz",

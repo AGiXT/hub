@@ -2,15 +2,6 @@ from Extensions import Extensions
 import os
 
 try:
-    from playsound import playsound
-except ImportError:
-    import sys
-    import subprocess
-
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "playsound==1.2.2"])
-    from playsound import playsound
-
-try:
     import gtts as ts
 except ImportError:
     import sys
