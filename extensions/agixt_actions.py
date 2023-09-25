@@ -503,8 +503,17 @@ class agixt_actions(Extensions):
         return response
 
     async def execute_python_code(self, code: str) -> str:
-        code = await self.get_python_code_from_response(code)
+        # Check if there are any package requirements in the code to install
+        package_requirements = re.findall(r"pip install (.*)", code)
+        if package_requirements:
+            # Install the required packages
+            for package in package_requirements:
+                try:
+                    subprocess.check_output(["pip", "install", package])
+                except:
+                    pass
         # Create the WORKSPACE directory if it doesn't exist
+        code = await self.get_python_code_from_response(code)
         workspace_dir = os.path.join(os.getcwd(), "WORKSPACE")
         os.makedirs(workspace_dir, exist_ok=True)
 
